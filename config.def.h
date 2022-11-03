@@ -1,5 +1,6 @@
 /* See LICENSE file for copyright and license details. */
 
+
 /* appearance */
 static const unsigned int borderpx  = 0;        /* border pixel of windows */
 static const unsigned int snap      = 0;       /* snap pixel */
@@ -18,10 +19,6 @@ static const char *colors[][3]      = {
 	[SchemeSel]  = { col_gray4, col_cyan,  col_cyan  },
 };
 
-static const char *const autostart[] = {
-	"st", NULL,
-	NULL /* terminate */
-};
 
 static const char *const autostart[] = {
 	"st", NULL,
@@ -29,20 +26,24 @@ static const char *const autostart[] = {
 };
 
 /* tagging */
-static const char *tags[] = { "firefox", "lutris", "steam", "obs", "pavucontrol", "youtube" };
+static const char *tags[] = { "firefox", "lutris", "steam", "obs", "pavucontrol", "youtube","streamavatar" };
 
 static const Rule rules[] = {
 	/* xprop(1):
 	 *	WM_CLASS(STRING) = instance, class
 	 *	WM_NAME(STRING) = title
 	 */
-	/* class      instance    title       tags mask     isfloating   monitor */
-	{ "firefox",  NULL,       NULL,       1 << 0,       0,           0 },
-	{ "Lutris",  NULL,       NULL,       1 << 1,       0,           0 },
-	{ "Steam",  NULL,       NULL,       1 << 2,       0,           0 },
-	{ "obs",     NULL,       NULL,       1 << 3,            0,           1 },
-	{ "Pavucontrol",     NULL,       NULL,       1 << 4,            0,           1 },
-	{ "YouTube Music",     NULL,       NULL,       1 << 5,            0,           1 },
+	/* class      instance    title       tags mask     isfloating   monitor*/
+	{ "firefox",  NULL,       NULL,       1 << 0,       0,                          0 },
+	{ "Lutris",  NULL,       NULL,       1 << 1,       0,           0 ,0 },
+	{ "battle.net.exe",     NULL, NULL,       1 << 1,           	0,           0, 0 },
+	{ "Steam",  NULL,       NULL,       1 << 2,       0,              0 , 0},
+	{ "steam_app_665300",  NULL,       NULL,       1 << 6,       0,              0, 0 },
+	{ "obs",     NULL,       NULL,       1 << 3,            0, 	         1 , 0},
+	{ "Pavucontrol",     NULL,       NULL,       1 << 4,                0,           1, 0 },
+	{  "qpwgraph", 		NULL,          NULL,       1 << 4,                0,           1, 0 },
+	{ "YouTube Music",     NULL,       NULL,       1 << 5,           	0,           1 , 0},
+	
 };
 
 /* layout(s) */
@@ -85,6 +86,8 @@ static void focusmonx(const Arg *arg) {
 static const char *dmenucmd[] = { "dmenu_run", "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, NULL };
 static const char *termcmd[]  = { "st", NULL };
 
+#include "selfrestart.c"
+
 static const Key keys[] = {
 	/* modifier                     key        function        argument */
 	{ MODKEY,                       XK_p,      spawn,          {.v = dmenucmd } },
@@ -111,13 +114,16 @@ static const Key keys[] = {
 	{ MODKEY,                       XK_period, focusmon,       {.i = +1 } },
 	{ MODKEY|ShiftMask,             XK_comma,  tagmon,         {.i = -1 } },
 	{ MODKEY|ShiftMask,             XK_period, tagmon,         {.i = +1 } },
+	{ MODKEY|ShiftMask,             XK_r,      self_restart,   {0} },
 	TAGKEYS(                        XK_1,                      0, 		0)
 	TAGKEYS(                        XK_2,                      1, 		0)
 	TAGKEYS(                        XK_3,                      2, 		0)
+	TAGKEYS(                        XK_4,                      6, 		0)
 	TAGKEYS(                        XK_F1,                     3, 		1)
 	TAGKEYS(                        XK_F2,                     4, 		1)
 	TAGKEYS(                        XK_F3,                     5, 		1)
 	{ MODKEY|ShiftMask,             XK_q,      quit,           {0} },
+	{ MODKEY|ControlMask|ShiftMask, XK_q,      quit,           {1} }, 
 };
 
 /* button definitions */
@@ -136,4 +142,3 @@ static const Button buttons[] = {
 	{ ClkTagBar,            MODKEY,         Button1,        tag,            {0} },
 	{ ClkTagBar,            MODKEY,         Button3,        toggletag,      {0} },
 };
-
