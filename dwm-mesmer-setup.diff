@@ -1,0 +1,305 @@
+From 13d1eecf599900780e5b3e4138bff5405b62a3cc Mon Sep 17 00:00:00 2001
+From: mesmer <mesmer@arch.localhost>
+Date: Thu, 3 Nov 2022 18:17:54 -0300
+Subject: [PATCH] set of mesmer patchs
+
+---
+ config.def.h | 31 +++++++++++++++-----------
+ dwm.1        | 10 +++++++++
+ dwm.c        | 63 +++++++++++++++++++++++++++++++++++++++++++++++++---
+ 3 files changed, 88 insertions(+), 16 deletions(-)
+
+diff --git a/config.def.h b/config.def.h
+index 412d597..4a2256e 100644
+--- a/config.def.h
++++ b/config.def.h
+@@ -1,5 +1,6 @@
+ /* See LICENSE file for copyright and license details. */
+ 
++
+ /* appearance */
+ static const unsigned int borderpx  = 0;        /* border pixel of windows */
+ static const unsigned int snap      = 0;       /* snap pixel */
+@@ -18,10 +19,6 @@ static const char *colors[][3]      = {
+ 	[SchemeSel]  = { col_gray4, col_cyan,  col_cyan  },
+ };
+ 
+-static const char *const autostart[] = {
+-	"st", NULL,
+-	NULL /* terminate */
+-};
+ 
+ static const char *const autostart[] = {
+ 	"st", NULL,
+@@ -29,20 +26,24 @@ static const char *const autostart[] = {
+ };
+ 
+ /* tagging */
+-static const char *tags[] = { "firefox", "lutris", "steam", "obs", "pavucontrol", "youtube" };
++static const char *tags[] = { "firefox", "lutris", "steam", "obs", "pavucontrol", "youtube","streamavatar" };
+ 
+ static const Rule rules[] = {
+ 	/* xprop(1):
+ 	 *	WM_CLASS(STRING) = instance, class
+ 	 *	WM_NAME(STRING) = title
+ 	 */
+-	/* class      instance    title       tags mask     isfloating   monitor */
+-	{ "firefox",  NULL,       NULL,       1 << 0,       0,           0 },
+-	{ "Lutris",  NULL,       NULL,       1 << 1,       0,           0 },
+-	{ "Steam",  NULL,       NULL,       1 << 2,       0,           0 },
+-	{ "obs",     NULL,       NULL,       1 << 3,            0,           1 },
+-	{ "Pavucontrol",     NULL,       NULL,       1 << 4,            0,           1 },
+-	{ "YouTube Music",     NULL,       NULL,       1 << 5,            0,           1 },
++	/* class      instance    title       tags mask     isfloating   monitor*/
++	{ "firefox",  NULL,       NULL,       1 << 0,       0,                          0 },
++	{ "Lutris",  NULL,       NULL,       1 << 1,       0,           0 ,0 },
++	{ "battle.net.exe",     NULL, NULL,       1 << 1,           	0,           0, 0 },
++	{ "Steam",  NULL,       NULL,       1 << 2,       0,              0 , 0},
++	{ "steam_app_665300",  NULL,       NULL,       1 << 6,       0,              0, 0 },
++	{ "obs",     NULL,       NULL,       1 << 3,            0, 	         1 , 0},
++	{ "Pavucontrol",     NULL,       NULL,       1 << 4,                0,           1, 0 },
++	{  "qpwgraph", 		NULL,          NULL,       1 << 4,                0,           1, 0 },
++	{ "YouTube Music",     NULL,       NULL,       1 << 5,           	0,           1 , 0},
++	
+ };
+ 
+ /* layout(s) */
+@@ -85,6 +86,8 @@ static void focusmonx(const Arg *arg) {
+ static const char *dmenucmd[] = { "dmenu_run", "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, NULL };
+ static const char *termcmd[]  = { "st", NULL };
+ 
++#include "selfrestart.c"
++
+ static const Key keys[] = {
+ 	/* modifier                     key        function        argument */
+ 	{ MODKEY,                       XK_p,      spawn,          {.v = dmenucmd } },
+@@ -111,13 +114,16 @@ static const Key keys[] = {
+ 	{ MODKEY,                       XK_period, focusmon,       {.i = +1 } },
+ 	{ MODKEY|ShiftMask,             XK_comma,  tagmon,         {.i = -1 } },
+ 	{ MODKEY|ShiftMask,             XK_period, tagmon,         {.i = +1 } },
++	{ MODKEY|ShiftMask,             XK_r,      self_restart,   {0} },
+ 	TAGKEYS(                        XK_1,                      0, 		0)
+ 	TAGKEYS(                        XK_2,                      1, 		0)
+ 	TAGKEYS(                        XK_3,                      2, 		0)
++	TAGKEYS(                        XK_4,                      6, 		0)
+ 	TAGKEYS(                        XK_F1,                     3, 		1)
+ 	TAGKEYS(                        XK_F2,                     4, 		1)
+ 	TAGKEYS(                        XK_F3,                     5, 		1)
+ 	{ MODKEY|ShiftMask,             XK_q,      quit,           {0} },
++	{ MODKEY|ControlMask|ShiftMask, XK_q,      quit,           {1} }, 
+ };
+ 
+ /* button definitions */
+@@ -136,4 +142,3 @@ static const Button buttons[] = {
+ 	{ ClkTagBar,            MODKEY,         Button1,        tag,            {0} },
+ 	{ ClkTagBar,            MODKEY,         Button3,        toggletag,      {0} },
+ };
+-
+diff --git a/dwm.1 b/dwm.1
+index 86e73f9..0f3a6ba 100644
+--- a/dwm.1
++++ b/dwm.1
+@@ -150,6 +150,9 @@ Add/remove all windows with nth tag to/from the view.
+ .TP
+ .B Mod1\-Shift\-q
+ Quit dwm.
++.TP
++.B Mod1\-Control\-Shift\-q
++Restart dwm.
+ .SS Mouse commands
+ .TP
+ .B Mod1\-Button1
+@@ -178,6 +181,13 @@ This file is started before any autostart.sh; dwm waits for its termination.
+ .SH CUSTOMIZATION
+ dwm is customized by creating a custom config.h and (re)compiling the source
+ code. This keeps it fast, secure and simple.
++.SH SIGNALS
++.TP
++.B SIGHUP - 1
++Restart the dwm process.
++.TP
++.B SIGTERM - 15
++Cleanly terminate the dwm process.
+ .SH SEE ALSO
+ .BR dmenu (1),
+ .BR st (1)
+diff --git a/dwm.c b/dwm.c
+index b2b2575..68f80ea 100644
+--- a/dwm.c
++++ b/dwm.c
+@@ -63,7 +63,7 @@ enum { CurNormal, CurResize, CurMove, CurLast }; /* cursor */
+ enum { SchemeNorm, SchemeSel }; /* color schemes */
+ enum { NetSupported, NetWMName, NetWMState, NetWMCheck,
+        NetWMFullscreen, NetActiveWindow, NetWMWindowType,
+-       NetWMWindowTypeDialog, NetClientList, NetLast }; /* EWMH atoms */
++       NetWMWindowTypeDialog, NetClientList, NetClientInfo, NetLast }; /* EWMH atoms */
+ enum { WMProtocols, WMDelete, WMState, WMTakeFocus, WMLast }; /* default atoms */
+ enum { ClkTagBar, ClkLtSymbol, ClkStatusText, ClkWinTitle,
+        ClkClientWin, ClkRootWin, ClkLast }; /* clicks */
+@@ -200,6 +200,7 @@ static void scan(void);
+ static int sendevent(Client *c, Atom proto);
+ static void sendmon(Client *c, Monitor *m);
+ static void setclientstate(Client *c, long state);
++static void setclienttagprop(Client *c);
+ static void setfocus(Client *c);
+ static void setfullscreen(Client *c, int fullscreen);
+ static void fullscreen(const Arg *arg);
+@@ -209,6 +210,8 @@ static void setup(void);
+ static void seturgent(Client *c, int urg);
+ static void showhide(Client *c);
+ static void sigchld(int unused);
++static void sighup(int unused);
++static void sigterm(int unused);
+ static void spawn(const Arg *arg);
+ static void tag(const Arg *arg);
+ static void tagmon(const Arg *arg);
+@@ -268,6 +271,7 @@ static void (*handler[LASTEvent]) (XEvent *) = {
+ 	[UnmapNotify] = unmapnotify
+ };
+ static Atom wmatom[WMLast], netatom[NetLast];
++static int restart = 0;
+ static int running = 1;
+ static Cur *cursor[CurLast];
+ static Clr **scheme;
+@@ -308,8 +312,7 @@ applyrules(Client *c)
+ 			c->isfloating = r->isfloating;
+ 			c->tags |= r->tags;
+ 			for (m = mons; m && m->num != r->monitor; m = m->next);
+-			if (m)
+-				c->mon = m;
++			if (m) { c->mon = m;}
+ 		}
+ 	}
+ 	if (ch.res_class)
+@@ -1071,6 +1074,26 @@ manage(Window w, XWindowAttributes *wa)
+ 	updatewindowtype(c);
+ 	updatesizehints(c);
+ 	updatewmhints(c);
++	{
++		int format;
++		unsigned long *data, n, extra;
++		Monitor *m;
++		Atom atom;
++		if (XGetWindowProperty(dpy, c->win, netatom[NetClientInfo], 0L, 2L, False, XA_CARDINAL,
++				&atom, &format, &n, &extra, (unsigned char **)&data) == Success && n == 2) {
++			c->tags = *data;
++			for (m = mons; m; m = m->next) {
++				if (m->num == *(data+1)) {
++					c->mon = m;
++					break;
++				}
++			}
++		}
++		if (n > 0)
++			XFree(data);
++	}
++	setclienttagprop(c);
++
+ 	XSelectInput(dpy, w, EnterWindowMask|FocusChangeMask|PropertyChangeMask|StructureNotifyMask);
+ 	grabbuttons(c, 0);
+ 	if (!c->isfloating)
+@@ -1261,6 +1284,7 @@ propertynotify(XEvent *e)
+ void
+ quit(const Arg *arg)
+ {
++	if(arg->i) restart = 1;
+ 	running = 0;
+ }
+ 
+@@ -1509,6 +1533,7 @@ sendmon(Client *c, Monitor *m)
+ 	c->tags = m->tagset[m->seltags]; /* assign tags of target monitor */
+ 	attach(c);
+ 	attachstack(c);
++	setclienttagprop(c);
+ 	focus(NULL);
+ 	arrange(NULL);
+ }
+@@ -1639,6 +1664,9 @@ setup(void)
+ 	/* clean up any zombies immediately */
+ 	sigchld(0);
+ 
++	signal(SIGHUP, sighup);
++	signal(SIGTERM, sigterm);
++
+ 	/* init screen */
+ 	screen = DefaultScreen(dpy);
+ 	sw = DisplayWidth(dpy, screen);
+@@ -1665,6 +1693,7 @@ setup(void)
+ 	netatom[NetWMWindowType] = XInternAtom(dpy, "_NET_WM_WINDOW_TYPE", False);
+ 	netatom[NetWMWindowTypeDialog] = XInternAtom(dpy, "_NET_WM_WINDOW_TYPE_DIALOG", False);
+ 	netatom[NetClientList] = XInternAtom(dpy, "_NET_CLIENT_LIST", False);
++	netatom[NetClientInfo] = XInternAtom(dpy, "_NET_CLIENT_INFO", False);
+ 	/* init cursors */
+ 	cursor[CurNormal] = drw_cur_create(drw, XC_left_ptr);
+ 	cursor[CurResize] = drw_cur_create(drw, XC_sizing);
+@@ -1688,6 +1717,7 @@ setup(void)
+ 	XChangeProperty(dpy, root, netatom[NetSupported], XA_ATOM, 32,
+ 		PropModeReplace, (unsigned char *) netatom, NetLast);
+ 	XDeleteProperty(dpy, root, netatom[NetClientList]);
++	XDeleteProperty(dpy, root, netatom[NetClientInfo]);
+ 	/* select events */
+ 	wa.cursor = cursor[CurNormal]->cursor;
+ 	wa.event_mask = SubstructureRedirectMask|SubstructureNotifyMask
+@@ -1738,6 +1768,20 @@ sigchld(int unused)
+ 	while (0 < waitpid(-1, NULL, WNOHANG));
+ }
+ 
++void
++sighup(int unused)
++{
++	Arg a = {.i = 1};
++	quit(&a);
++}
++
++void
++sigterm(int unused)
++{
++	Arg a = {.i = 0};
++	quit(&a);
++}
++
+ void
+ spawn(const Arg *arg)
+ {
+@@ -1750,11 +1794,22 @@ spawn(const Arg *arg)
+ 	}
+ }
+ 
++void
++setclienttagprop(Client *c)
++{
++	long data[] = { (long) c->tags, (long) c->mon->num };
++	XChangeProperty(dpy, c->win, netatom[NetClientInfo], XA_CARDINAL, 32,
++			PropModeReplace, (unsigned char *) data, 2);
++}
++
+ void
+ tag(const Arg *arg)
+ {
++	Client *c;
+ 	if (selmon->sel && arg->ui & TAGMASK) {
++		c = selmon->sel;
+ 		selmon->sel->tags = arg->ui & TAGMASK;
++		setclienttagprop(c);
+ 		focus(NULL);
+ 		arrange(selmon);
+ 	}
+@@ -1829,6 +1884,7 @@ toggletag(const Arg *arg)
+ 	newtags = selmon->sel->tags ^ (arg->ui & TAGMASK);
+ 	if (newtags) {
+ 		selmon->sel->tags = newtags;
++		setclienttagprop(selmon->sel);
+ 		focus(NULL);
+ 		arrange(selmon);
+ 	}
+@@ -2244,6 +2300,7 @@ main(int argc, char *argv[])
+ 	scan();
+ 	runautostart();
+ 	run();
++	if(restart) execvp(argv[0], argv);
+ 	cleanup();
+ 	XCloseDisplay(dpy);
+ 	return EXIT_SUCCESS;
+-- 
+2.38.1
+
