@@ -33,8 +33,8 @@ static const Rule rules[] = {
 	 *	WM_CLASS(STRING) = instance, class
 	 *	WM_NAME(STRING) = title
 	 */
-	/* class      instance    title       tags mask     isfloating   monitor  */
-	{ "firefox",  NULL,       NULL,       1 << 0,       0, 	0 },
+	/* class      instance    title       tags mask     isfloating   monitor 	close*/
+	{ "firefox",  NULL,       NULL,       1 << 0,       0, 	0, 	0 },
 	{ "Lutris",  NULL,       NULL,       1 << 1,       0,           0 ,0 },
 	{ "battle.net.exe",     NULL, NULL,       1 << 1,           	0,           0, 0 },
 	{ "Steam",  NULL,       NULL,       1 << 2,       0,              0 , 0},
