@@ -34,12 +34,12 @@ static const Rule rules[] = {
 	 *	WM_NAME(STRING) = title
 	 */
 	/* class      instance    title       tags mask     isfloating   monitor 	close*/
-	{ "firefox",  NULL,       NULL,       1 << 0,       0, 	0, 	0 },
-	{ "Lutris",  NULL,       NULL,       1 << 1,       0,           0 ,0 },
+	{ "firefox",  NULL,       NULL,       1 << 0,       0,           0, 	0 },
+	{ "Lutris",  NULL,       NULL,       1 << 1,        0,           0,     1 },
 	{ "battle.net.exe",     NULL, NULL,       1 << 1,           	0,           0, 0 },
 	{ "Steam",  NULL,       NULL,       1 << 2,       0,              0 , 0},
 	{ "steam_app_665300",  NULL,       NULL,       1 << 6,       0,              0, 0 },
-	{ "obs",     NULL,       NULL,       1 << 3,            0, 	         1 , 0},
+	{ "obs",     NULL,       NULL,       1 << 3,            0, 	         1 , 0} ,
 	{ "Pavucontrol",     NULL,       NULL,       1 << 4,                0,           1, 0 },
 	{  "qpwgraph", 		NULL,          NULL,       1 << 4,                0,           1, 0 },
 	{ "YouTube Music",     NULL,       NULL,       1 << 5,           	0,           1 , 0},
